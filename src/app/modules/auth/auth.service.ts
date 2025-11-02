@@ -18,15 +18,23 @@ import { ResetToken } from '../resetToken/resetToken.model';
 import { User } from '../user/user.model';
 import { USER_STATUS } from '../user/user.constant';
 
-//login
+//------------------ login service ------------------
 const loginUserFromDB = async (payload: ILoginData) => {
   const { email, password } = payload;
   const isExistUser = await User.findOne({ email }).select('+password');
   if (!isExistUser) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+    throw new ApiError(StatusCodes.BAD_REQUEST, config.node_env === 'development' ? "User doesn't exist!" : 'Invalid email or password');
   }
 
-  //check verified and status
+  // check if user is deleted
+  if (isExistUser.isDeleted) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'It looks like your account has been deleted or deactivated.'
+    );
+  }
+
+  //check if user is verified
   if (!isExistUser.isVerified) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
@@ -38,26 +46,23 @@ const loginUserFromDB = async (payload: ILoginData) => {
   if (isExistUser.status !== USER_STATUS.ACTIVE) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      'You don’t have permission to access this content.It looks like your account has been deactivated.'
+      'It looks like your account has been suspended or deactivated.'
     );
   }
 
   //check match password
-  if (
-    password &&
-    !(await User.isMatchPassword(password, isExistUser.password))
-  ) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
+  if (!(await User.isMatchPassword(password, isExistUser.password))) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, config.node_env === 'development' ? 'Password is incorrect!' : 'Invalid email or password');
   }
 
-  //create token
-  const createToken = jwtHelper.createToken(
+  //create access token
+  const accessToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
     config.jwt.jwt_secret as Secret,
     config.jwt.jwt_expire_in as string
   );
 
-  return { createToken };
+  return { accessToken, role: isExistUser.role };
 };
 
 //forget password
