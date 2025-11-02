@@ -4,13 +4,13 @@ import { USER_ROLES, USER_STATUS } from './user.constant';
 export type IUser = {
   name: string;
   role: USER_ROLES;
-  contact: string;
   email: string;
   password: string;
-  location: string;
+  phone: string;
   image?: string;
   status: USER_STATUS;
   isVerified: boolean;
+  isDeleted: boolean;
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;

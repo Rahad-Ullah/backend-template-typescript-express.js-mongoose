@@ -29,9 +29,13 @@ const userSchema = new Schema<IUser, UserModal>(
       select: 0,
       minlength: 8,
     },
+    phone: {
+      type: String,
+      default: '',
+    },
     image: {
       type: String,
-      default: 'https://i.ibb.co/z5YHLV9/profile.png',
+      default: '',
     },
     status: {
       type: String,
@@ -39,6 +43,10 @@ const userSchema = new Schema<IUser, UserModal>(
       default: USER_STATUS.ACTIVE,
     },
     isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
       type: Boolean,
       default: false,
     },
