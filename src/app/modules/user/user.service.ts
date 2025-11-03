@@ -18,7 +18,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   }
 
   //send email
-  const otp = generateOTP();
+  const otp = generateOTP(6);
   const values = {
     name: createUser.name,
     otp: otp,
