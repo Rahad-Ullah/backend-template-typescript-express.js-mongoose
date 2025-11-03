@@ -69,7 +69,23 @@ const loginUserFromDB = async (payload: ILoginData) => {
 const forgetPasswordToDB = async (email: string) => {
   const isExistUser = await User.isExistUserByEmail(email);
   if (!isExistUser) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+    throw new ApiError(StatusCodes.BAD_REQUEST, config.node_env === 'development' ? "User doesn't exist!" : "Invalid email");
+  }
+
+  // check if user is deleted
+  if (isExistUser.isDeleted) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'It looks like your account has been deleted or deactivated.'
+    );
+  }
+
+  //check user status
+  if (isExistUser.status !== USER_STATUS.ACTIVE) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'It looks like your account has been suspended or deactivated.'
+    );
   }
 
   //send mail
