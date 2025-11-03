@@ -1,8 +1,16 @@
 node_modules
-.env
 dist
+
+# package manager locks
 package-lock.json
 yarn.lock
 
+# environment variables
+.env
+
+# local files
 /winston
 /uploads
+
+# code editor
+.vscode
