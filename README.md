@@ -1,4 +1,4 @@
-# Project Name
+# Backend Template for TypeScript, Express and Mongoose
 
 This is a template project for backend development using Typescript, Node.js, Express, Mongoose, Bcrypt, JWT, NodeMailer, Multer, ESLint, and Prettier. The aim is to reduce setup time for new backend projects.
 
@@ -70,13 +70,12 @@ Ensure you have the following installed:
    In the root directory of the project, create a `.env` file and add the following variables. Adjust the values according to your setup.
 
    ```env
-   # Basic
-   SERVER_NAME=project_name
+   SERVER_NAME=template
    NODE_ENV=development
-   DATABASE_URL=mongodb://127.0.0.1:27017/project_name
+   DATABASE_URL=mongodb://127.0.0.1:27017/template
    IP_ADDRESS=10.10.7.7
-   PORT=5000      // for production after build (`npm start`)
-   PORT_DEV=5001  // for development (`npm run dev`)
+   PORT=5000      # for production after build (`npm start`)
+   PORT_DEV=5001  # for development (`npm run dev`)
 
    # Bcrypt
    BCRYPT_SALT_ROUNDS=12
@@ -86,7 +85,7 @@ Ensure you have the following installed:
    JWT_EXPIRE_IN=1d
 
    # Email
-   EMAIL_FROM=your_email@gmail.com
+   EMAIL_FROM=your_company_email@gmail.com
    EMAIL_USER=your_email@gmail.com
    EMAIL_PASS=mkqcfjeqloothyax
    EMAIL_PORT=587
