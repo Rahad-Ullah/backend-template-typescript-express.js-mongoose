@@ -26,6 +26,6 @@ jobs:
           node-version: 20
 
       - name: Run Semantic Release
-        run: yarn dlx semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
