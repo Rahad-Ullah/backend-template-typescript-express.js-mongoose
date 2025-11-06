@@ -1,11 +1,11 @@
-import { Request } from 'express';
+import { NextFunction, Request, Response, RequestHandler } from 'express';
 import fs from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import ApiError from '../../errors/ApiError';
 
-const fileUploadHandler = () => {
+const fileUploadHandler = (): RequestHandler => {
   //create upload folder
   const baseUploadDir = path.join(process.cwd(), 'uploads');
   if (!fs.existsSync(baseUploadDir)) {
@@ -22,7 +22,7 @@ const fileUploadHandler = () => {
   //create filename
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      let uploadDir;
+      let uploadDir: string;
       switch (file.fieldname) {
         case 'image':
           uploadDir = path.join(baseUploadDir, 'image');
@@ -60,11 +60,7 @@ const fileUploadHandler = () => {
     cb: FileFilterCallback
   ) => {
     if (file.fieldname === 'image') {
-      if (
-        file.mimetype === 'image/jpeg' ||
-        file.mimetype === 'image/png' ||
-        file.mimetype === 'image/jpg'
-      ) {
+      if (['image/jpeg', 'image/png', 'image/jpg'].includes(file.mimetype)) {
         cb(null, true);
       } else {
         cb(
@@ -75,7 +71,7 @@ const fileUploadHandler = () => {
         );
       }
     } else if (file.fieldname === 'media') {
-      if (file.mimetype === 'video/mp4' || file.mimetype === 'audio/mpeg') {
+      if (['video/mp4', 'audio/mpeg'].includes(file.mimetype)) {
         cb(null, true);
       } else {
         cb(
@@ -104,7 +100,20 @@ const fileUploadHandler = () => {
     { name: 'media', maxCount: 3 },
     { name: 'doc', maxCount: 3 },
   ]);
-  return upload;
+
+  // wrap Multer upload in a proper Express RequestHandler
+  return (req: Request, res: Response, next: NextFunction) => {
+    upload(req as any, res as any, err => {
+      if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({ message: err.message });
+      } else if (err) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: 'File upload error' });
+      }
+      next();
+    });
+  };
 };
 
 export default fileUploadHandler;
