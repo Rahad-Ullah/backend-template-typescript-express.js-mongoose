@@ -8,7 +8,15 @@
     "github": "https://github.com/Rahad-Ullah"
   },
   "license": "ISC",
-  "keywords": ["node", "express", "typescript", "mongodb", "mongoose", "rest api", "template"],
+  "keywords": [
+    "node",
+    "express",
+    "typescript",
+    "mongodb",
+    "mongoose",
+    "rest api",
+    "template"
+  ],
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/dev-server.ts",
@@ -16,12 +24,15 @@
     "build": "tsc",
     "cm": "ts-node ./src/cm.ts",
     "lint:check": "eslint --ignore-path .eslintignore --ext .js,.ts",
-    "lint:fix": "lint . --fix",
+    "lint:fix": "eslint --fix",
     "prettier:check": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "prettier:fix": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
@@ -34,6 +45,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
+    "semantic-release": "^24.2.9",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
   },
@@ -50,7 +62,6 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^7.0.10",
-    "npm": "^10.8.1",
     "socket.io": "^4.7.5",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0",
