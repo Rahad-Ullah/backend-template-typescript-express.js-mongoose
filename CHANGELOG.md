@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/Rahad-Ullah/backend-template-typescript-express.js-mongoose/compare/v3.0.0...v3.0.1) (2025-11-06)
+
+
+### Bug Fixes
+
+* express and multer type conflict in file uploader ([68f3d6f](https://github.com/Rahad-Ullah/backend-template-typescript-express.js-mongoose/commit/68f3d6f944796d83b3f89dcdb366df0bb74dcf25))
+
 ## [2.2.1](https://github.com/Rahad-Ullah/backend-template-typescript-express.js-mongoose/compare/v2.2.0...v2.2.1) (2025-11-06)
 
 
