@@ -3,7 +3,7 @@ name: 🚀 Semantic Release
 on:
   push:
     branches:
-      - production
+      - main
 
 permissions:
   contents: write
@@ -27,8 +27,6 @@ jobs:
       - name: Install semantic-release and plugins
         run: |
           npm install -g semantic-release \
-            @semantic-release/changelog \
-            @semantic-release/git \
             @semantic-release/github \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
