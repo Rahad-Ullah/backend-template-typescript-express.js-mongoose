@@ -23,6 +23,7 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "cm": "ts-node ./src/cm.ts",
+    "commit": "npx git-cz",
     "lint:check": "eslint --ignore-path .eslintignore --ext .js,.ts",
     "lint:fix": "eslint --fix",
     "prettier:check": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
@@ -40,6 +41,8 @@
     "@types/nodemailer": "^6.4.15",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "ts-node-dev": "^2.0.0",
@@ -62,5 +65,10 @@
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.23.8"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
