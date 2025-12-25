@@ -26,7 +26,7 @@ app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
   const date = new Date(Date.now());
   res.send(
-    `<h1 style="text-align:center; color:#173616; font-family:Verdana;">Beep-beep! The ${config.se} server is alive and kicking.</h1>
+    `<h1 style="text-align:center; color:#173616; font-family:Verdana;">Beep-beep! The ${config.server_name} server is alive and kicking.</h1>
     <p style="text-align:center; color:#173616; font-family:Verdana;">${date}</p>
     `
   );
