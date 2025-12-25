@@ -62,7 +62,7 @@ Ensure you have the following installed:
    Using yarn:
 
    ```bash
-   yarn
+   yarn install
    ```
 
 3. **Create a `.env` file:**
@@ -110,10 +110,40 @@ Ensure you have the following installed:
    yarn dev
    ```
 
-### Running the Tests
 
-Explain how to run the automated tests for this system.
+## 📝 Semantic Commit Guide
 
+We use **Conventional Commits** with **Commitizen** to keep commit messages consistent and help with automatic versioning.
+
+### How to Commit
+
+**1. Stage your changes:**
 ```bash
-npm test
+git add .
 ```
+
+**2. Run the Commitizen prompt:**
+```bash
+npm run commit
+```
+
+**3. Follow the prompts:**
+
+- **Type:** feat, fix, chore, docs, etc.
+- **Scope (optional):** e.g., `job-post`
+- **Short description:** what changed
+- **Breaking change (optional):** if it breaks existing code (yes/no)
+- **Open Issue:** if it affects any open issues (yes/no)
+
+### Examples
+```bash
+feat(job-post): add create job post endpoint
+fix(auth): correct password validation
+chore(commit): setup Commitizen for structured commits
+feat!(job-post): change payload structure (breaking)
+```
+
+### Tips
+- Always use `npm run commit` instead of `git commit`.
+- Keep the description short and clear.
+- Only mark breaking changes if the API or behavior changes.
