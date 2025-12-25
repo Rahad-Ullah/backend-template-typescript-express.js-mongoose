@@ -1,12 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
-function toCamelCase(str: string): string {
+function toPascalCase(str: string): string {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
-      index === 0 ? match.toUpperCase() : match.toLowerCase()
-    )
-    .replace(/\s+/g, '');
+    .replace(/[-_ ]+(.)/g, (_, c) => c.toUpperCase())
+    .replace(/^(.)/, (_, c) => c.toUpperCase());
+}
+
+function toCamelCase(str: string): string {
+  const pascal = toPascalCase(str);
+  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+}
+
+function toConstantCase(str: string): string {
+  return str
+    .replace(/[-\s]+/g, '_') // convert - and spaces to _
+    .replace(/([a-z])([A-Z])/g, '$1_$2') // camelCase → snake_case
+    .toUpperCase();
 }
 
 type Templates = {
@@ -20,11 +30,14 @@ type Templates = {
 };
 
 function createModule(name: string): void {
-  const camelCaseName = toCamelCase(name);
-  const folderName = camelCaseName.toLowerCase();
+  const pascalName = toPascalCase(name); // JobSeeker
+  const camelName = toCamelCase(name); // jobSeeker
+  const constantName = toConstantCase(name); // JOB_SEEKER
+  const folderName = camelName; // jobSeeker
+
   const folderPath = path.join(__dirname, 'app', 'modules', folderName);
 
-  // Check if the folder already exists
+  // Create folder
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath);
     console.log(`Created folder: ${folderName}`);
@@ -34,13 +47,55 @@ function createModule(name: string): void {
   }
 
   const templates: Templates = {
-    interface: `import { Model } from 'mongoose';\n\nexport type I${camelCaseName} = {\n  // Define the interface for ${camelCaseName} here\n};\n\nexport type ${camelCaseName}Model = Model<I${camelCaseName}>;\n`,
-    model: `import { Schema, model } from 'mongoose';\nimport { I${camelCaseName}, ${camelCaseName}Model } from './${folderName}.interface'; \n\nconst ${folderName}Schema = new Schema<I${camelCaseName}, ${camelCaseName}Model>({\n  // Define schema fields here\n});\n\nexport const ${camelCaseName} = model<I${camelCaseName}, ${camelCaseName}Model>('${camelCaseName}', ${folderName}Schema);\n`,
-    controller: `import { Request, Response, NextFunction } from 'express';\nimport { ${camelCaseName}Services } from './${folderName}.service';\n\nexport const ${camelCaseName}Controller = { };\n`,
-    service: `import { ${camelCaseName}Model } from './${folderName}.interface';\n\nexport const ${camelCaseName}Services = { };\n`,
-    route: `import express from 'express';\nimport { ${camelCaseName}Controller } from './${folderName}.controller';\n\nconst router = express.Router();\n\nrouter.get('/', ${camelCaseName}Controller); \n\nexport const ${camelCaseName}Routes = router;\n`,
-    validation: `import { z } from 'zod';\n\nexport const ${camelCaseName}Validations = {  };\n`,
-    constants: `export const ${camelCaseName.toUpperCase()}_CONSTANT = 'someValue';\n`,
+    interface: `import { Model } from 'mongoose';
+
+export type I${pascalName} = {
+  // Define the interface for ${pascalName} here
+};
+
+export type ${pascalName}Model = Model<I${pascalName}>;`,
+
+    model: `import { Schema, model } from 'mongoose';
+import { I${pascalName}, ${pascalName}Model } from './${folderName}.interface';
+
+const ${camelName}Schema = new Schema<I${pascalName}, ${pascalName}Model>({
+  // Define schema fields here
+});
+
+export const ${pascalName} = model<I${pascalName}, ${pascalName}Model>(
+  '${pascalName}',
+  ${camelName}Schema
+);`,
+
+    controller: `import { Request, Response, NextFunction } from 'express';
+import { ${pascalName}Services } from './${folderName}.service';
+
+export const ${pascalName}Controller = {
+  // Controller methods here
+};`,
+
+    service: `import { I${pascalName} } from './${folderName}.interface';
+
+export const ${pascalName}Services = {
+  // Service methods here
+};`,
+
+    route: `import express from 'express';
+import { ${pascalName}Controller } from './${folderName}.controller';
+
+const router = express.Router();
+
+router.get('/', ${pascalName}Controller);
+
+export const ${camelName}Routes = router;`,
+
+    validation: `import { z } from 'zod';
+
+export const ${pascalName}Validations = {
+  // Zod validation schemas
+};`,
+
+    constants: `export const ${constantName}_CONSTANT = 'someValue';`,
   };
 
   Object.entries(templates).forEach(([key, content]) => {
@@ -49,49 +104,43 @@ function createModule(name: string): void {
     console.log(`Created file: ${filePath}`);
   });
 
-  // Add the new module to the central `apiRoutes` array
-  updateRouterFile(folderName, camelCaseName);
+  updateRouterFile(folderName, camelName);
 }
 
-// Get the module name from command line arguments
 const moduleName: string | undefined = process.argv[2];
 if (!moduleName) {
   console.log(
-    'Please provide a module name, e.g., node generateModule UserProfile'
+    'Please provide a module name, e.g., node generateModule userProfile'
   );
 } else {
   createModule(moduleName);
 }
 
-/**
- * Updates the central router file by adding a new module route import and entry.
- *
- * @param folderName - The name of the folder/module (in lowercase or kebab-case).
- * @param camelCaseName - The camelCase name of the module (used for route import/export).
- */
-function updateRouterFile(folderName: string, camelCaseName: string): void {
+function updateRouterFile(folderName: string, camelName: string): void {
   const routerPath = path.join(__dirname, 'app/routes', 'index.ts');
-  const routeImport = `import { ${camelCaseName}Routes } from '../app/modules/${folderName}/${folderName}.route';`;
-  const routeEntry = `{ path: '/${folderName}', route: ${camelCaseName}Routes }`;
+
+  const routeImport = `import { ${camelName}Routes } from '../app/modules/${folderName}/${folderName}.route';`;
+  const routeEntry = `{ path: '/${folderName}', route: ${camelName}Routes }`;
 
   let routerFileContent = fs.readFileSync(routerPath, 'utf-8');
 
-  // Check if the import statement is already present
   if (!routerFileContent.includes(routeImport)) {
     routerFileContent = `${routeImport}\n${routerFileContent}`;
   }
 
-  // Find the `apiRoutes` array and update it
   const apiRoutesRegex =
     /export const apiRoutes: \{ path: string; route: any \}\[] = \[([\s\S]*?)\]/;
+
   const match = routerFileContent.match(apiRoutesRegex);
 
   if (match) {
     const currentRoutes = match[1].trim();
+
     if (!currentRoutes.includes(routeEntry)) {
       const updatedRoutes = currentRoutes
         ? `${currentRoutes}\n  ${routeEntry}`
         : `${routeEntry}`;
+
       routerFileContent = routerFileContent.replace(
         apiRoutesRegex,
         `export const apiRoutes: { path: string; route: any }[] = [\n  ${updatedRoutes}\n]`
@@ -99,12 +148,11 @@ function updateRouterFile(folderName: string, camelCaseName: string): void {
     }
   } else {
     console.error(
-      'Failed to find apiRoutes array. Ensure the app.ts file has a properly defined apiRoutes array.'
+      'Failed to find apiRoutes array. Ensure index.ts has a properly defined apiRoutes array.'
     );
     return;
   }
 
-  // Write the updated content back to the `app.ts` file
   fs.writeFileSync(routerPath, routerFileContent, 'utf-8');
-  console.log(`✅ Added route for ${camelCaseName} to central router.`);
+  console.log(`✅ Added route for ${camelName} to central router.`);
 }
