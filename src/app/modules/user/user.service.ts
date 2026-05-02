@@ -30,7 +30,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   //save to DB
   const authentication = {
     oneTimeCode: otp,
-    expireAt: new Date(Date.now() + 3 * 60000),
+    expireAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
   };
   await User.findOneAndUpdate(
     { _id: createUser._id },

@@ -1,5 +1,5 @@
 import config from '../config';
-import { ICreateAccount, IResetPassword } from '../types/emailTamplate';
+import { ICreateAccount, IResetPassword } from '../types/emailTemplate';
 
 const createAccount = (values: ICreateAccount) => {
   const data = {
@@ -21,7 +21,7 @@ const createAccount = (values: ICreateAccount) => {
                       style="background-color: #277E16; padding: 10px; text-align: center; border-radius: 8px; color: #fff; font-size: 25px; letter-spacing: 2px; margin: 20px auto;">
                       ${values.otp}
                   </span>
-                  <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 3 minutes.</p>
+                  <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 5 minutes.</p>
               </div>
           </div>
       </body>
@@ -45,7 +45,7 @@ const resetPassword = (values: IResetPassword) => {
                       style="background-color: #277E16; padding: 10px; text-align: center; border-radius: 8px; color: #fff; font-size: 25px; letter-spacing: 2px; margin: 20px auto;">
                       ${values.otp}
                   </span>
-                  <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 3 minutes.</p>
+                  <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 5 minutes.</p>
                   <p style="color: #b9b4b4; font-size: 16px; line-height: 1.5; margin-bottom: 20px;text-align:center">
                     If you didn't request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.
                   </p>

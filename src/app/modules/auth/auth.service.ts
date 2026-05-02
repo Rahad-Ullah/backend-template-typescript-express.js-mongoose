@@ -100,7 +100,7 @@ const forgetPasswordToDB = async (email: string) => {
   //save to DB
   const authentication = {
     oneTimeCode: otp,
-    expireAt: new Date(Date.now() + 3 * 60000),
+    expireAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
   };
   await User.findOneAndUpdate({ email }, { $set: { authentication } });
 };
@@ -161,7 +161,7 @@ const verifyEmailToDB = async (payload: IVerifyEmail) => {
     await ResetToken.create({
       user: isExistUser._id,
       token: createToken,
-      expireAt: new Date(Date.now() + 5 * 60000),
+      expireAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
     });
     message =
       'Verification Successful: Please securely store and utilize this code for reset password';
