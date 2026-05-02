@@ -117,10 +117,11 @@ if (!moduleName) {
 }
 
 function updateRouterFile(folderName: string, camelName: string): void {
-  const routerPath = path.join(__dirname, 'app/routes', 'index.ts');
+  const routerPath = path.join(__dirname, 'routes', 'index.ts');
 
   const routeImport = `import { ${camelName}Routes } from '../app/modules/${folderName}/${folderName}.route';`;
-  const routeEntry = `{ path: '/${folderName}', route: ${camelName}Routes }`;
+  const pluralPath = `/${folderName.toLowerCase()}s`;
+  const routeEntry = `{ path: '${pluralPath}', route: ${camelName}Routes }`;
 
   let routerFileContent = fs.readFileSync(routerPath, 'utf-8');
 
@@ -128,8 +129,7 @@ function updateRouterFile(folderName: string, camelName: string): void {
     routerFileContent = `${routeImport}\n${routerFileContent}`;
   }
 
-  const apiRoutesRegex =
-    /export const apiRoutes: \{ path: string; route: any \}\[] = \[([\s\S]*?)\]/;
+  const apiRoutesRegex = /const apiRoutes\s*=\s*\[((.|\s)*?)\];/m;
 
   const match = routerFileContent.match(apiRoutesRegex);
 
@@ -143,7 +143,7 @@ function updateRouterFile(folderName: string, camelName: string): void {
 
       routerFileContent = routerFileContent.replace(
         apiRoutesRegex,
-        `export const apiRoutes: { path: string; route: any }[] = [\n  ${updatedRoutes}\n]`
+        `const apiRoutes: { path: string; route: any }[] = [\n  ${updatedRoutes}\n]`
       );
     }
   } else {
