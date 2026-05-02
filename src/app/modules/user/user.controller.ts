@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
 import { getSingleFilePath } from '../../../shared/getFilePath';
@@ -18,12 +18,24 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.getSingleUserFromDB(req.user.id);
+  const result = await UserService.getProfileFromDB(req.user.id);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Profile data retrieved successfully',
+    data: result,
+  });
+});
+
+// get single user by id
+const getSingleUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getSingleUserFromDB(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User data retrieved successfully',
     data: result,
   });
 });
@@ -47,4 +59,9 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const UserController = { createUser, getUserProfile, updateProfile };
+export const UserController = {
+  createUser,
+  getUserProfile,
+  getSingleUser,
+  updateProfile,
+};

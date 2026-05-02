@@ -7,7 +7,7 @@ import unlinkFile from '../../../shared/unlinkFile';
 import generateOTP from '../../../utils/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
-import { USER_ROLES } from './user.constant';
+import { USER_ROLES, USER_STATUS } from './user.constant';
 
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   //set role
@@ -45,13 +45,38 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
 };
 
 const getSingleUserFromDB = async (id: string): Promise<Partial<IUser>> => {
-  const isExistUser = await User.isExistUserById(id);
-  if (!isExistUser) {
+  const user = await User.isExistUserById(id);
+  if (!user) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  return isExistUser;
+  return user;
 };
+
+const getProfileFromDB = async (id: string): Promise<Partial<IUser>> => {
+  const user = await User.isExistUserById(id);
+  if (!user) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  // check if user is deleted
+  if (user.isDeleted) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'It looks like your account has been deleted or deactivated.',
+    );
+  }
+
+  //check user status
+  if (user.status !== USER_STATUS.ACTIVE) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'It looks like your account has been suspended or deactivated.',
+    );
+  }
+
+  return user;
+};;
 
 const updateProfileToDB = async (
   user: JwtPayload,
@@ -78,5 +103,6 @@ const updateProfileToDB = async (
 export const UserService = {
   createUserToDB,
   getSingleUserFromDB,
+  getProfileFromDB,
   updateProfileToDB,
 };
