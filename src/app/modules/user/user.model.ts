@@ -94,14 +94,11 @@ userSchema.statics.isMatchPassword = async (
   return await bcrypt.compare(password, hashPassword);
 };
 
-//check user
+// password hash
 userSchema.pre('save', async function (next) {
-  //check user
-  const isExist = await User.findOne({ email: this.email });
-  if (isExist) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist!');
-  }
-
+  // check if password not exist or password not modified in this call
+  if (!this.password) return next();
+  if (!this.isModified('password')) return next();
   //password hash
   this.password = await bcrypt.hash(
     this.password,
