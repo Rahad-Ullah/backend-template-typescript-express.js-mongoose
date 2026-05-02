@@ -12,17 +12,18 @@ import { USER_ROLES } from './user.constant';
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   //set role
   payload.role = USER_ROLES.USER;
-  const createUser = await User.create(payload);
-  if (!createUser) {
+
+  const createdUser = await User.create(payload);
+  if (!createdUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
 
   //send email
   const otp = generateOTP(6);
   const values = {
-    name: createUser.name,
+    name: createdUser.name,
     otp: otp,
-    email: createUser.email!,
+    email: createdUser.email!,
   };
   const createAccountTemplate = emailTemplate.createAccount(values);
   emailHelper.sendEmail(createAccountTemplate);
@@ -33,11 +34,14 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
     expireAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
   };
   await User.findOneAndUpdate(
-    { _id: createUser._id },
-    { $set: { authentication } }
+    { _id: createdUser._id },
+    { $set: { authentication } },
   );
 
-  return createUser;
+  // remove password
+  createdUser.password = '';
+
+  return createdUser;
 };
 
 const getSingleUserFromDB = async (id: string): Promise<Partial<IUser>> => {

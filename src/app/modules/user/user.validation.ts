@@ -12,11 +12,13 @@ const createUserZodSchema = z.object({
 });
 
 const updateUserZodSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().optional(),
-  phone: z.string().optional(),
-  image: z.string().optional(),
-  status: z.nativeEnum(USER_STATUS).optional(),
+  body: z.object({
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    image: z.string().optional(),
+    status: z.nativeEnum(USER_STATUS).optional(),
+  }),
 });
 
 export const UserValidation = {
