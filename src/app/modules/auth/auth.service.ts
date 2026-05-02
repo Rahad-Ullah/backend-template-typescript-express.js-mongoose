@@ -12,8 +12,8 @@ import {
   ILoginData,
   IVerifyEmail,
 } from '../../../types/auth';
-import cryptoToken from '../../../util/cryptoToken';
-import generateOTP from '../../../util/generateOTP';
+import cryptoToken from '../../../utils/cryptoToken';
+import generateOTP from '../../../utils/generateOTP';
 import { ResetToken } from '../resetToken/resetToken.model';
 import { User } from '../user/user.model';
 import { USER_STATUS } from '../user/user.constant';
