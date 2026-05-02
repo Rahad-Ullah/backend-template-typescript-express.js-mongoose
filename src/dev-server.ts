@@ -17,9 +17,10 @@ process.on('uncaughtException', error => {
 
 let server: any;
 async function main() {
+  logger.info(colors.yellow('🚀 Server is starting...'));
   try {
     mongoose.connect(config.database_url as string);
-    logger.info(colors.green('🚀 Database connected successfully'));
+    logger.info(colors.green('✅ Database connected successfully'));
 
     //Seed Super Admin after database connection is successful
     await seedSuperAdmin();
@@ -28,9 +29,7 @@ async function main() {
       typeof config.port_dev === 'number' ? config.port_dev : Number(config.port_dev);
 
     server = app.listen(port, config.ip_address as string, () => {
-      logger.info(
-        colors.yellow(`♻️  Application listening on port:${port}`)
-      );
+      logger.info(colors.yellow(`📶 Application listening on port:${port}`));
     });
 
     //socket
@@ -63,10 +62,21 @@ async function main() {
 
 main();
 
-//SIGTERM
+// handle SIGTERM
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM IS RECEIVE');
+  logger.info('SIGTERM received. Closing server...');
   if (server) {
-    server.close();
+    server.close(() => {
+      logger.info('Server closed. Exiting process.');
+      process.exit(0); // Explicitly kill the process after cleanup
+    });
+  } else {
+    process.exit(0);
   }
+});
+
+// handle SIGINT
+process.on('SIGINT', () => {
+  logger.info('SIGINT received. Exiting...');
+  process.exit(0);
 });
