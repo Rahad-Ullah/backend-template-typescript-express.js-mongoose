@@ -9,6 +9,8 @@ export default {
   node_env: process.env.NODE_ENV,
   port: process.env.PORT,
   port_dev: process.env.PORT_DEV,
+  frontend_url: process.env.FRONTEND_URL,
+  logo_url: process.env.LOGO_URL,
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
