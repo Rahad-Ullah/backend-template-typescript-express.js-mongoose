@@ -10,6 +10,7 @@ export type IUser = {
   image?: string;
   status: USER_STATUS;
   isVerified: boolean;
+  isOnline: boolean;
   isDeleted: boolean;
   authentication?: {
     isResetPassword: boolean;
